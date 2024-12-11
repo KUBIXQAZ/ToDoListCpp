@@ -1,16 +1,55 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <fstream>
 
 using namespace std;
 
-int main()
-{
+string fileName = "tasks.txt";
+
+vector<string> loadTasks() {
     vector<string> tasks;
 
-    bool run = true;
+    try {
+        ifstream file(fileName);
 
-    while (run) {
+        if (file.is_open()) {
+            string line;
+            while (getline(file, line)) {
+                tasks.push_back(line);
+            }
+            file.close();
+        }
+    }
+    catch (exception) {
+        return tasks;
+    }
+
+    return tasks;
+}
+
+void saveTasks(vector<string> tasks) {
+    try {
+        ofstream file(fileName);
+
+        if (file.is_open()) {
+            for (string task : tasks)
+            {
+                file << task << endl;
+            }
+            file.close();
+        }
+    }
+    catch (exception) {
+        return;
+    }
+}
+
+int main()
+{
+    vector<string> tasks = loadTasks();
+
+    while (true) {
         cout << "0. Exit." << endl;
         cout << "1. List all of my tasks." << endl;
         cout << "2. Add task." << endl;
@@ -22,7 +61,7 @@ int main()
         cout << endl;
 
         if (option == "0") {
-            run = false;
+            return 0;
         }
         else if (option == "1") {
             if (tasks.size() == 0) {
@@ -50,6 +89,8 @@ int main()
 
             tasks.push_back(task);
 
+            saveTasks(tasks);
+
             cout << "Task added." << endl;
 
             cout << endl;
@@ -75,6 +116,8 @@ int main()
             }
 
             tasks.erase(tasks.begin() + index);
+
+            saveTasks(tasks);
 
             cout << "Task removed." << endl;
 
